@@ -1,5 +1,13 @@
 {
   "system_address": "udp://:14540",
-  "takeoff_altitude": 5.0,
-  "mission_altitude": 10.0
+  "takeoff_altitude": 5,
+  "mission": [
+    { "lat": 47.398, "lon": 8.545, "alt": 10, "speed": 5 },
+    { "lat": 47.399, "lon": 8.546, "alt": 10, "speed": 5 }
+  ],
+  "geofence": {
+    "lat": 47.398,
+    "lon": 8.545,
+    "radius": 100
+  }
 }
