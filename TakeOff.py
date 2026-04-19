@@ -1,24 +1,40 @@
-import rclpy
-from rclpy.node import Node
-from geometry_msgs.msg import Twist
-class CrazyFile(Node):
-    def __init__(plus):
-        super().__init__("CrazyFile")
-        plus.publisher = plus.create_publisher(Twist, 'crazy_file', 10)
-        plus.timer = plus.create_timer(1, plus.timer_crazyfile)
-    def timer_crazyfile(plus):
-        msg = Twist()
-        msg.linear.x = 1.0
-        msg.linear.y = 0.0
-        msg.linear.z = 3.0
-        plus.publisher.publish(msg)
-        plus.get_logger().info(f'Отправлено: {msg.linear.x}, {msg.linear.y}, {msg.linear.z}')
-    def most(args = None):
-        rclpy.init()
-        node = CrazyFile()
-        rclpy.spin(node)
-        node.destroy_node()
-        rclpy.shutdown()
+import asyncio
+from mavsdk import System
 
-if __name__ == '__main__':
-    CrazyFile.most()
+class Drone:
+    async def run(self):
+        drone = System()
+
+        print("Connecting to drone...")
+        await drone.connect(system_address="udp://:14540")
+
+        print("Waiting for connection...")
+        async for state in drone.core.connection_state():
+            if state.is_connected:
+                print("Drone connected!")
+                break
+
+        print("Waiting for GPS...")
+        async for health in drone.telemetry.health():
+            if health.is_global_position_ok:
+                print("GPS ready!")
+                break
+
+        print("Arming...")
+        await drone.action.arm()
+
+        print("Takeoff...")
+        await drone.action.takeoff()
+
+        print("Flying 5 seconds...")
+        await asyncio.sleep(5)
+
+        print("Landing...")
+        await drone.action.land()
+
+
+async def main():
+    green_sky = Drone()
+    await green_sky.run()
+
+asyncio.run(main())
